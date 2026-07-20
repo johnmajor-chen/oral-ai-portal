@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>口腔醫學 AI 指揮中心</title>
+  <style>
+    :root { --glow: #38BDF8; --bg: #0F172A; }
+    body { 
+      margin: 0; font-family: "Inter", "Microsoft JhengHei", sans-serif; height: 100vh; overflow: hidden;
+      /* 重點修改：將遮罩透明度從 0.9 改為 0.4，讓圖變顯眼 */
+      background: linear-gradient(rgba(15, 23, 42, 0.4), rgba(15, 23, 42, 0.4)), 
+                  url('IMG_8106.jpg') no-repeat center center fixed;
+      background-size: cover; color: white;
+    }
+    
+    /* 玻璃擬態科技感 (Glassmorphism) - 用於容器 */
+    .glass { 
+      background: rgba(17, 24, 39, 0.7); backdrop-filter: blur(12px);
+      border: 1px solid rgba(56, 189, 248, 0.5); border-radius: 16px;
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.2);
+    }
+
+    /* 登入介面佈局 - 改為靠左 */
+    #loginGate { display: flex; align-items: center; justify-content: flex-start; height: 100vh; padding-left: 5%; }
+    .login-box { padding: 40px; text-align: center; width: 90%; max-width: 340px; /* 登入框變窄，不蓋住背景 */ }
+    
+    /* 導航中心佈局 - 居中 */
+    #navCenter { display: grid; place-items: center; height: 100vh; }
+    .nav-box { padding: 40px; text-align: center; width: 90%; max-width: 500px; }
+
+    h1 { font-size: 26px; color: var(--glow); margin-bottom: 25px; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+    
+    input { width: 100%; padding: 14px; margin: 10px 0; border-radius: 8px; border: 1px solid var(--glow); background: rgba(0,0,0,0.3); color: white; box-sizing: border-box; }
+    button { padding: 14px; background: var(--glow); border: none; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; color: #0F172A; margin-top: 15px; transition: 0.3s; }
+    button:hover { box-shadow: 0 0 15px var(--glow); transform: scale(1.02); }
+
+    .nav-btn { font-size: 18px; padding: 25px; margin: 10px 0; display: block; border: 1px solid var(--glow); color: white; background: transparent; }
+    
+    /* 工作區區域 */
+    #appArea { width: 100%; height: 100vh; display: flex; flex-direction: column; }
+    .toolbar { background: rgba(17, 24, 39, 0.9); padding: 15px 25px; display: flex; justify-content: space-between; border-bottom: 1px solid var(--glow); }
+    iframe { width: 100%; flex-grow: 1; border: none; }
+    .exit-btn { background: #E11D48; color: white; width: auto; padding: 8px 20px; }
+    
+    /* 工具類別 */
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+  <!-- 1. 登入閘門 (此處修改為靠左顯示) -->
+  <div id="loginGate">
+    <div class="login-box glass">
+      <h1>口腔癌 AI 智慧連動平台</h1>
+      <input type="text" id="userInput" placeholder="醫師帳號">
+      <input type="password" id="passInput" placeholder="存取密碼">
+      <button onclick="checkAuth()">驗證身份並登入</button>
+    </div>
+  </div>
+
+  <!-- 2. 導航中心 (登入後顯示，居中) -->
+  <div id="navCenter" class="hidden glass box">
+    <h1>選擇操作系統</h1>
+    <button class="nav-btn" onclick="openApp(1)">🏥 口腔癌病灶辨識系統</button>
+    <button class="nav-btn" onclick="openApp(2)">🦷 初階口腔篩檢系統</button>
+    <button class="exit-btn" onclick="location.reload()">登出</button>
+  </div>
+
+  <!-- 3. 工作站區域 -->
+  <div id="appArea" class="hidden">
+    <div class="toolbar glass">
+      <span id="appTitle" style="color:var(--glow); font-weight:bold;">工作站</span>
+      <button class="exit-btn" onclick="backToNav()">🔙 切換系統</button>
+    </div>
+    <iframe id="aiIframe" allow="camera; microphone"></iframe>
+  </div>
+
+  <script>
+    const VALID_USER = "123";
+    const VALID_PASS = "123";
+    const SPACE_1 = "https://huggingface.co/spaces/johnmajor2/Line_oral_premalignant_lesion_AIbot/embed";
+    const SPACE_2 = "https://huggingface.co/spaces/johnmajor2/junior-oral-screening/embed";
+
+    function checkAuth() {
+      if (document.getElementById('userInput').value === VALID_USER && document.getElementById('passInput').value === VALID_PASS) {
+        document.getElementById('loginGate').classList.add('hidden');
+        document.getElementById('navCenter').classList.remove('hidden');
+      } else { alert("驗證失敗"); }
+    }
+
+    function openApp(id) {
+      document.getElementById('navCenter').classList.add('hidden');
+      document.getElementById('aiIframe').src = (id === 1) ? SPACE_1 : SPACE_2;
+      document.getElementById('appTitle').textContent = (id === 1) ? "口腔癌病灶辨識系統" : "初階口腔篩檢系統";
+      document.getElementById('appArea').classList.remove('hidden');
+    }
+
+    function backToNav() {
+      document.getElementById('appArea').classList.add('hidden');
+      document.getElementById('navCenter').classList.remove('hidden');
+      document.getElementById('aiIframe').src = "";
+    }
+  </script>
+</body>
+</html>
